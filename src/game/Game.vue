@@ -30,7 +30,6 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import { Stopwatch } from '@/core/classes/Stopwatch';
-import { Timer } from '@/core/classes/Timer';
 import { shuffle } from '@/core/functions/shuffle';
 import GameCard from '@/game/GameCard.vue';
 
@@ -41,7 +40,7 @@ const LABELS = Array.from({ length: 18 }).map((_, i) => i);
 @Options({
   components: { GameCard },
   watch: {
-    'selectedTimer.isStarted': function (val: boolean) {
+    selectedTimerId(val: boolean) {
       if (this.selectedCards.length && !val) {
         this.resetSelection();
       }
@@ -64,8 +63,8 @@ export default class Game extends Vue {
   gameStarted = false
   cards: TCard[] = []
   foundCards: number[] = []
-  selectedTimer = new Timer()
-  debounceTimer = new Timer()
+  selectedTimerId: number | undefined = undefined
+  debounceTimerId: number | undefined = undefined
   commonTime = new Stopwatch()
   selectedCards: Array<number> = []
 
@@ -96,13 +95,13 @@ export default class Game extends Vue {
   }
 
   async handleCardClick(cardIndex: number) {
-    if (this.debounceTimer.isStarted) {
+    if (this.debounceTimerId) {
       return;
     }
 
     if (!this.selectedCards.length) {
       this.selectCard(cardIndex);
-      this.selectedTimer.start(5);
+      this.selectedTimerId = setTimeout(() => this.resetSelection(), 5000);
 
       return;
     }
@@ -111,7 +110,7 @@ export default class Game extends Vue {
 
     if (firstCardIndex === cardIndex) {
       this.resetSelection();
-      this.selectedTimer.stop();
+      clearTimeout(this.selectedTimerId);
 
       return;
     }
@@ -120,10 +119,13 @@ export default class Game extends Vue {
       this.foundCards = [...this.foundCards, cardIndex, firstCardIndex];
     } else {
       this.selectCard(cardIndex);
-      await this.debounceTimer.start({ ms: 500 });
+      await new Promise(resolve => {
+        this.debounceTimerId = setTimeout(resolve, 500);
+      });
     }
 
     this.resetSelection();
+    clearTimeout(this.selectedTimerId);
   }
 }
 </script>
