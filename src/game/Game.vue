@@ -42,10 +42,11 @@ const LABELS = Array.from({ length: 18 }).map((_, i) => i);
   components: { GameCard },
   watch: {
     foundCards(val: number[]) {
-      if (val.length === 36) {
+      if (val.length === this.cards.length * 2) {
         this.gameStarted = false;
         this.commonTime.stop();
         this.commonTime.clear();
+        this.foundCards = [];
       }
     },
   },
