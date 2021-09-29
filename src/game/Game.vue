@@ -41,11 +41,6 @@ const LABELS = Array.from({ length: 18 }).map((_, i) => i);
 @Options({
   components: { GameCard },
   watch: {
-    'selectedTimer.isStarted': function (val: boolean) {
-      if (this.selectedCards.length && !val) {
-        this.resetSelection();
-      }
-    },
     foundCards(val: number[]) {
       if (val.length === 36) {
         this.gameStarted = false;
@@ -102,7 +97,8 @@ export default class Game extends Vue {
 
     if (!this.selectedCards.length) {
       this.selectCard(cardIndex);
-      this.selectedTimer.start(5);
+      await this.selectedTimer.start(5);
+      this.resetSelection();
 
       return;
     }
@@ -110,8 +106,8 @@ export default class Game extends Vue {
     const firstCardIndex = this.selectedCards[0];
 
     if (firstCardIndex === cardIndex) {
-      this.resetSelection();
       this.selectedTimer.stop();
+      this.resetSelection();
 
       return;
     }
@@ -124,6 +120,7 @@ export default class Game extends Vue {
     }
 
     this.resetSelection();
+    this.selectedTimer.stop();
   }
 }
 </script>
