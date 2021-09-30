@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { computed, ref, watch } from 'vue';
 import { Stopwatch } from '@/core/classes/Stopwatch';
 import { Timer } from '@/core/classes/Timer';
 import { shuffle } from '@/core/functions/shuffle';
@@ -38,92 +38,98 @@ type TCard = { value: number }
 
 const LABELS = Array.from({ length: 18 }).map((_, i) => i);
 
-@Options({
+export default {
+  name: 'Game',
   components: { GameCard },
-  watch: {
-    foundCards(val: number[]) {
-      if (val.length === this.cards.length * 2) {
-        this.gameStarted = false;
-        this.commonTime.stop();
-        this.commonTime.clear();
-        this.foundCards = [];
+  setup() {
+    const gameStarted = ref(false);
+    const cards = ref([] as TCard[]);
+    const foundCards = ref([] as number[]);
+    const selectedTimer = ref(new Timer());
+    const debounceTimer = ref(new Timer());
+    const commonTime = ref(new Stopwatch());
+    const selectedCards = ref([] as number[]);
+
+    const secondsPassedAfterStart = computed(() => commonTime.value.value);
+
+    watch(foundCards, val => {
+      if (val.length === cards.value.length * 2) {
+        gameStarted.value = false;
+        commonTime.value.stop();
+        commonTime.value.clear();
+        foundCards.value = [];
       }
-    },
+    });
+
+    function isSelected(index: number) {
+      return selectedCards.value.includes(index);
+    }
+    function isFound(index: number) {
+      return foundCards.value.includes(index);
+    }
+    function selectCard(index: number) {
+      selectedCards.value = [...selectedCards.value, index];
+    }
+    function resetSelection() {
+      selectedCards.value = [];
+    }
+    function startGame() {
+      gameStarted.value = true;
+      commonTime.value.start();
+      cards.value = shuffle(LABELS.flatMap((x) => [{ value: x }, { value: x }]));
+    }
+    function handleStartClick() {
+      startGame();
+    }
+    async function handleCardClick(cardIndex: number) {
+      if (debounceTimer.value.isStarted) {
+        return;
+      }
+
+      if (!selectedCards.value.length) {
+        selectCard(cardIndex);
+        await selectedTimer.value.start(5);
+        resetSelection();
+
+        return;
+      }
+
+      const firstCardIndex = selectedCards.value[0];
+
+      if (firstCardIndex === cardIndex) {
+        selectedTimer.value.stop();
+        resetSelection();
+
+        return;
+      }
+
+      if (cards.value[cardIndex].value === cards.value[firstCardIndex].value) {
+        foundCards.value = [...foundCards.value, cardIndex, firstCardIndex];
+      } else {
+        selectCard(cardIndex);
+        await debounceTimer.value.start({ ms: 500 });
+      }
+
+      resetSelection();
+      selectedTimer.value.stop();
+    }
+
+    return {
+      gameStarted,
+      cards,
+      foundCards,
+      selectedTimer,
+      debounceTimer,
+      commonTime,
+      selectedCards,
+      secondsPassedAfterStart,
+      handleCardClick,
+      handleStartClick,
+      isFound,
+      isSelected,
+    };
   },
-  computed: {
-    secondsPassedAfterStart() {
-      return this.commonTime.value;
-    },
-  },
-})
-export default class Game extends Vue {
-  gameStarted = false
-  cards: TCard[] = []
-  foundCards: number[] = []
-  selectedTimer = new Timer()
-  debounceTimer = new Timer()
-  commonTime = new Stopwatch()
-  selectedCards: Array<number> = []
-
-  isSelected(index: number) {
-    return this.selectedCards.includes(index);
-  }
-
-  isFound(index: number) {
-    return this.foundCards.includes(index);
-  }
-
-  selectCard(index: number) {
-    this.selectedCards = [...this.selectedCards, index];
-  }
-
-  resetSelection() {
-    this.selectedCards = [];
-  }
-
-  startGame() {
-    this.gameStarted = true;
-    this.commonTime.start();
-    this.cards = shuffle(LABELS.flatMap((x) => [{ value: x }, { value: x }]));
-  }
-
-  handleStartClick() {
-    this.startGame();
-  }
-
-  async handleCardClick(cardIndex: number) {
-    if (this.debounceTimer.isStarted) {
-      return;
-    }
-
-    if (!this.selectedCards.length) {
-      this.selectCard(cardIndex);
-      await this.selectedTimer.start(5);
-      this.resetSelection();
-
-      return;
-    }
-
-    const firstCardIndex = this.selectedCards[0];
-
-    if (firstCardIndex === cardIndex) {
-      this.selectedTimer.stop();
-      this.resetSelection();
-
-      return;
-    }
-
-    if (this.cards[cardIndex].value === this.cards[firstCardIndex].value) {
-      this.foundCards = [...this.foundCards, cardIndex, firstCardIndex];
-    } else {
-      this.selectCard(cardIndex);
-      await this.debounceTimer.start({ ms: 500 });
-    }
-
-    this.resetSelection();
-    this.selectedTimer.stop();
-  }
-}
+};
 </script>
 
 <style scoped lang="scss">
