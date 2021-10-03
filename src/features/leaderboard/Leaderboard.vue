@@ -27,7 +27,6 @@ export default {
   name: 'Leaderboard',
   setup() {
     const store = useStore();
-    console.log(format(new Date(), 'dd.MM.yyyy HH:mm'));
     const formatResultDate = result => ({
       score: result.score,
       date: format(new Date(result.date), 'dd.MM.yyyy HH:mm'),
