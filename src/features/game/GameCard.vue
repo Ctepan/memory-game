@@ -8,22 +8,19 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-
-@Options({
+export default {
+  name: 'GameCard',
   props: {
     selected: {
       type: Boolean,
-      default: 0,
+      default: false,
     },
     closeDelay: {
       type: Number,
       default: 0,
     },
   },
-})
-export default class GameCard extends Vue {
-}
+};
 </script>
 
 <style scoped lang="scss">

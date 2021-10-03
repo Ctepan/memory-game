@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div>
     <div class="timers">
       <span>{{ secondsPassedAfterStart }}</span>
     </div>
@@ -32,7 +32,7 @@ import { computed, ref, watch } from 'vue';
 import { Stopwatch } from '@/core/classes/Stopwatch';
 import { Timer } from '@/core/classes/Timer';
 import { shuffle } from '@/core/functions/shuffle';
-import GameCard from '@/game/GameCard.vue';
+import GameCard from './GameCard.vue';
 
 type TCard = { value: number }
 
@@ -64,23 +64,29 @@ export default {
     function isSelected(index: number) {
       return selectedCards.value.includes(index);
     }
+
     function isFound(index: number) {
       return foundCards.value.includes(index);
     }
+
     function selectCard(index: number) {
       selectedCards.value = [...selectedCards.value, index];
     }
+
     function resetSelection() {
       selectedCards.value = [];
     }
+
     function startGame() {
       gameStarted.value = true;
       commonTime.value.start();
       cards.value = shuffle(LABELS.flatMap((x) => [{ value: x }, { value: x }]));
     }
+
     function handleStartClick() {
       startGame();
     }
+
     async function handleCardClick(cardIndex: number) {
       if (debounceTimer.value.isStarted) {
         return;
@@ -133,13 +139,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.main {
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-}
-
 .timers {
   display: flex;
   justify-content: space-between;

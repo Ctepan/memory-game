@@ -1,19 +1,17 @@
 <template>
   <div id="app">
-    <Game/>
+    <div class="main">
+      <router-link :to="{ name: 'game' }">Game</router-link>
+      <router-link :to="{ name: 'leaderboard' }">Leaderboard</router-link>
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import Game from './game/Game.vue';
-
-@Options({
-  components: {
-    Game,
-  },
-})
-export default class App extends Vue {}
+export default {
+  name: 'App',
+};
 </script>
 
 <style>
@@ -24,5 +22,15 @@ export default class App extends Vue {}
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.main {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 936px;
+  margin: auto;
 }
 </style>
