@@ -12,7 +12,7 @@
           :selected="isSelected(index)"
           @click="handleCardClick(index)"
         >
-          <i v-if="isSelected(index)" :class="card.value"></i>
+          <i v-if="isSelected(index) || isMemorizing" :class="card.value"></i>
         </GameCard>
       </template>
 
@@ -49,9 +49,11 @@ export default {
     const foundCards = ref([] as number[]);
     const selectedTimer = ref(new Timer());
     const debounceTimer = ref(new Timer());
+    const memorizeTimer = ref(new Timer());
     const commonTime = ref(new Stopwatch());
     const selectedCards = ref([] as number[]);
 
+    const isMemorizing = computed(() => memorizeTimer.value.isStarted);
     const secondsPassedAfterStart = computed(() => commonTime.value.value);
 
     watch(foundCards, val => {
@@ -83,10 +85,11 @@ export default {
       selectedCards.value = [];
     }
 
-    function startGame() {
-      gameStarted.value = true;
-      commonTime.value.start();
+    async function startGame() {
       cards.value = shuffle(ICONS.flatMap((x) => [{ value: x }, { value: x }]));
+      gameStarted.value = true;
+      await memorizeTimer.value.start(5);
+      commonTime.value.start();
     }
 
     function handleStartClick() {
@@ -94,7 +97,7 @@ export default {
     }
 
     async function handleCardClick(cardIndex: number) {
-      if (debounceTimer.value.isStarted) {
+      if (debounceTimer.value.isStarted || isMemorizing.value) {
         return;
       }
 
@@ -135,6 +138,7 @@ export default {
       commonTime,
       selectedCards,
       secondsPassedAfterStart,
+      isMemorizing,
       handleCardClick,
       handleStartClick,
       isFound,
