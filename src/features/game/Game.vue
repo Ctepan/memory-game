@@ -12,7 +12,7 @@
           :selected="isSelected(index)"
           @click="handleCardClick(index)"
         >
-          <span v-if="isSelected(index)">{{ card.value }}</span>
+          <i v-if="isSelected(index)" :class="card.value"></i>
         </GameCard>
       </template>
 
@@ -34,10 +34,9 @@ import { Stopwatch } from '@/core/classes/Stopwatch';
 import { Timer } from '@/core/classes/Timer';
 import { shuffle } from '@/core/functions/shuffle';
 import GameCard from './GameCard.vue';
+import { ICONS } from '@/features/game/constants';
 
-type TCard = { value: number }
-
-const LABELS = Array.from({ length: 18 }).map((_, i) => i);
+type TCard = { value: string }
 
 export default {
   name: 'Game',
@@ -87,7 +86,7 @@ export default {
     function startGame() {
       gameStarted.value = true;
       commonTime.value.start();
-      cards.value = shuffle(LABELS.flatMap((x) => [{ value: x }, { value: x }]));
+      cards.value = shuffle(ICONS.flatMap((x) => [{ value: x }, { value: x }]));
     }
 
     function handleStartClick() {

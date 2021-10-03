@@ -1,10 +1,8 @@
 <template>
-  <div id="app">
-    <div class="main">
-      <router-link :to="{ name: 'game' }">Game</router-link>
-      <router-link :to="{ name: 'leaderboard' }">Leaderboard</router-link>
-      <router-view></router-view>
-    </div>
+  <div class="main">
+    <router-link :to="{ name: 'game' }">Game</router-link>
+    <router-link :to="{ name: 'leaderboard' }">Leaderboard</router-link>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -15,6 +13,8 @@ export default {
 </script>
 
 <style>
+@import "./assets/icons/bootstrap-icons.css";
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
