@@ -1,19 +1,27 @@
 <template>
-  <div class="main">
-    <router-link :to="{ name: 'game' }">Game</router-link>
-    <router-link :to="{ name: 'leaderboard' }">Leaderboard</router-link>
-    <router-view></router-view>
+  <div>
+    <AppBar class="header"></AppBar>
+    <div class="main">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
+import AppBar from '@/core/components/AppBar.vue';
+
 export default {
   name: 'App',
+  components: { AppBar },
 };
 </script>
 
 <style>
 @import "./assets/icons/bootstrap-icons.css";
+
+body {
+  margin: 0;
+}
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -21,16 +29,20 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+.header {
+
 }
 
 .main {
+  margin: auto;
+  margin-top: 60px;
   display: flex;
   flex-flow: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   max-width: 936px;
-  margin: auto;
 }
 </style>
