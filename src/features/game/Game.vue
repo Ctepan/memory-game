@@ -29,6 +29,7 @@
 
 <script lang="ts">
 import { computed, ref, watch } from 'vue';
+import { useStore } from '@/store';
 import { Stopwatch } from '@/core/classes/Stopwatch';
 import { Timer } from '@/core/classes/Timer';
 import { shuffle } from '@/core/functions/shuffle';
@@ -42,6 +43,8 @@ export default {
   name: 'Game',
   components: { GameCard },
   setup() {
+    const store = useStore();
+
     const gameStarted = ref(false);
     const cards = ref([] as TCard[]);
     const foundCards = ref([] as number[]);
@@ -53,9 +56,13 @@ export default {
     const secondsPassedAfterStart = computed(() => commonTime.value.value);
 
     watch(foundCards, val => {
-      if (val.length === cards.value.length * 2) {
-        gameStarted.value = false;
+      if (val.length === cards.value.length) {
         commonTime.value.stop();
+        store.commit('newResult', {
+          score: commonTime.value.value,
+          date: Number(new Date()),
+        });
+        gameStarted.value = false;
         commonTime.value.clear();
         foundCards.value = [];
       }
