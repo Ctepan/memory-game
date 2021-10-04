@@ -1,7 +1,12 @@
 <template>
   <div>
-    <div class="timers">
-      <span>{{ secondsPassedAfterStart }}</span>
+    <div class="info">
+      <div>
+        Elapsed time: {{ secondsPassedAfterStart }}
+      </div>
+      <div v-if="topRankScore">
+        Top rank time: {{ topRankScore }}
+      </div>
     </div>
     <div class="field">
       <template v-if="gameStarted" >
@@ -139,6 +144,7 @@ export default {
       selectedCards,
       secondsPassedAfterStart,
       isMemorizing,
+      topRankScore: computed(() => store.getters.topRankScore),
       handleCardClick,
       handleStartClick,
       isFound,
@@ -149,7 +155,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.timers {
+.info {
   display: flex;
   justify-content: space-between;
 }
