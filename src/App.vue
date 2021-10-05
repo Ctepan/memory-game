@@ -47,5 +47,6 @@ body {
   align-items: center;
   width: 100%;
   max-width: 936px;
+  min-width: 320px;
 }
 </style>

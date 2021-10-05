@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="game">
     <div class="info">
       <div>
         Elapsed time: {{ secondsPassedAfterStart }}
@@ -9,34 +9,38 @@
       </div>
     </div>
 
-    <div class="field">
-      <template v-if="gameStarted" >
-        <GameCard
-          v-for="(card, index) in cards"
-          :class="{ 'found-card': isFound(index) }"
-          :key="card.value"
-          :selected="isSelected(index)"
-          @click="handleCardClick(index)"
-        >
-          <i v-if="isSelected(index) || isMemorizing" :class="card.value"></i>
-        </GameCard>
-      </template>
+    <div class="square-adaptive-container field">
+      <div class="square-adaptive-container__inside">
+        <div class="field__grid">
+          <template v-if="gameStarted" >
+            <GameCard
+              v-for="(card, index) in cards"
+              :class="{ 'found-card': isFound(index) }"
+              :key="card.value"
+              :selected="isSelected(index)"
+              @click="handleCardClick(index)"
+            >
+              <i v-if="isSelected(index) || isMemorizing" :class="card.value"></i>
+            </GameCard>
+          </template>
 
-      <div
-        v-else
-        class="field__start-trigger"
-        @click="handleStartClick"
-      >
-        Start
-      </div>
-    </div>
+          <div
+            v-else
+            class="field__start-trigger"
+            @click="handleStartClick"
+          >
+            Start
+          </div>
+        </div>
 
-    <div class="messages">
-      <div v-if="gameStarted && isMemorizing">
-        Get ready!
-      </div>
-      <div v-else-if="gameStarted">
-        Go!
+        <div class="messages">
+          <div v-if="gameStarted && isMemorizing">
+            Get ready!
+          </div>
+          <div v-else-if="gameStarted">
+            Go!
+          </div>
+        </div>
       </div>
     </div>
 
@@ -192,6 +196,11 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+.game {
+  width: 100%;
+  max-width: 400px;
+}
+
 .info {
   display: flex;
   justify-content: space-between;
@@ -199,13 +208,16 @@ export default defineComponent({
 
 .field {
   margin-top: 8px;
-  position: relative;
-  display: grid;
-  width: 400px;
-  height: 400px;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(6, 1fr);
-  grid-gap: 4px;
+  width: 100%;
+
+  &__grid {
+    height: 100%;
+    display: grid;
+    position: relative;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    grid-gap: 4px;
+  }
 
   &__start-trigger {
     background: rgba(0, 0, 0, 0.1);
