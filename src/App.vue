@@ -4,6 +4,9 @@
     <div class="main">
       <router-view></router-view>
     </div>
+    <div class="modal-place">
+
+    </div>
   </div>
 </template>
 
