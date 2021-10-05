@@ -47,6 +47,10 @@ export default {
 .leaderboard {
   width: 100%;
 
+  td, th {
+    padding: 8px 0;
+  }
+
   & th {
     background: aliceblue;
   }
