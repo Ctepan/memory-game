@@ -32,15 +32,15 @@
             Start
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="messages">
-          <div v-if="gameStarted && isMemorizing">
-            Get ready!
-          </div>
-          <div v-else-if="gameStarted">
-            Go!
-          </div>
-        </div>
+    <div class="messages">
+      <div v-if="gameStarted && isMemorizing">
+        Get ready!
+      </div>
+      <div v-else-if="gameStarted">
+        Go!
       </div>
     </div>
 
