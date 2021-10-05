@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import App from '@/App.vue';
 import store, { key } from '@/store';
 import Game from '@/features/game/Game.vue';
@@ -11,7 +11,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory('/memory-game/'),
+  history: createWebHashHistory('/memory-game/'),
   routes,
 });
 
