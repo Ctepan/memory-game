@@ -18,6 +18,7 @@ export default {
 
 <style>
 @import "./assets/icons/bootstrap-icons.css";
+@import "./assets/styles/global.scss";
 
 body {
   margin: 0;
@@ -36,8 +37,7 @@ body {
 }
 
 .main {
-  margin: auto;
-  margin-top: 60px;
+  margin: 60px 0 auto;
   display: flex;
   flex-flow: column;
   justify-content: center;

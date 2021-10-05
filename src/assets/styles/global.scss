@@ -1,0 +1,17 @@
+.app-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  font-size: 16px;
+  padding: 0 12px;
+  background: aliceblue;
+  font-variant: small-caps;
+  text-decoration: none;
+  color: black;
+  border: none;
+
+  &:visited {
+    color: currentColor;
+  }
+}
