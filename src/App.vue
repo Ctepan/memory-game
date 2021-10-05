@@ -40,7 +40,7 @@ body {
 }
 
 .main {
-  margin: 60px 0 auto;
+  margin: 60px auto 0;
   display: flex;
   flex-flow: column;
   justify-content: center;
