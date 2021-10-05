@@ -8,6 +8,7 @@
         Top rank time: {{ topRankScore }}
       </div>
     </div>
+
     <div class="field">
       <template v-if="gameStarted" >
         <GameCard
@@ -26,26 +27,45 @@
         class="field__start-trigger"
         @click="handleStartClick"
       >
-        Старт
+        Start
       </div>
     </div>
+
+    <div class="messages">
+      <div v-if="gameStarted && isMemorizing">
+        Get ready!
+      </div>
+      <div v-else-if="gameStarted">
+        Go!
+      </div>
+    </div>
+
+    <teleport to=".modal-place">
+      <GameOverDialog time=""></GameOverDialog>
+    </teleport>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, ref, watch } from 'vue';
+import {
+  computed, defineComponent, ref, watch,
+} from 'vue';
 import { useStore } from '@/store';
 import { Stopwatch } from '@/core/classes/Stopwatch';
 import { Timer } from '@/core/classes/Timer';
 import { shuffle } from '@/core/functions/shuffle';
-import GameCard from './GameCard.vue';
 import { ICONS } from '@/features/game/constants';
+import GameCard from './GameCard.vue';
+import GameOverDialog from './GameOverDialog.vue';
 
 type TCard = { value: string }
 
-export default {
+export default defineComponent({
   name: 'Game',
-  components: { GameCard },
+  components: {
+    GameCard,
+    GameOverDialog,
+  },
   setup() {
     const store = useStore();
 
@@ -60,6 +80,7 @@ export default {
 
     const isMemorizing = computed(() => memorizeTimer.value.isStarted);
     const secondsPassedAfterStart = computed(() => commonTime.value.value);
+    const topRankScore = computed(() => store.getters.topRankScore);
 
     watch(foundCards, val => {
       if (val.length === cards.value.length) {
@@ -144,14 +165,14 @@ export default {
       selectedCards,
       secondsPassedAfterStart,
       isMemorizing,
-      topRankScore: computed(() => store.getters.topRankScore),
+      topRankScore,
       handleCardClick,
       handleStartClick,
       isFound,
       isSelected,
     };
   },
-};
+});
 </script>
 
 <style scoped lang="scss">
@@ -161,6 +182,7 @@ export default {
 }
 
 .field {
+  margin-top: 8px;
   position: relative;
   display: grid;
   width: 400px;
@@ -170,14 +192,26 @@ export default {
   grid-gap: 4px;
 
   &__start-trigger {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.1);
+    font-size: 34px;
     position: absolute;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
   }
+}
+
+.messages {
+  margin-top: 8px;
+  font-size: 24px;
+  text-align: center;
 }
 
 .found-card {
