@@ -1,19 +1,46 @@
 <template>
-  <div class="overlay">
+  <div
+    v-if="active"
+    class="overlay"
+    @click="closeDialog"
+  >
     <div class="dialog">
       <slot></slot>
+
+      <div class="footer">
+        <button
+          class="app-button"
+          @click="closeDialog"
+        >
+          ok
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { onMounted, onUnmounted } from 'vue';
+
 export default {
   name: 'AppDialog',
-  mounted() {
-    window.document.body.style.overflow = 'hidden';
+  props: {
+    active: {
+      type: Boolean,
+      default: true,
+    },
   },
-  unmounted() {
-    window.document.body.style.overflow = '';
+  setup(props, { emit }) {
+    onMounted(() => { window.document.body.style.overflow = 'hidden'; });
+    onUnmounted(() => { window.document.body.style.overflow = ''; });
+
+    function closeDialog() {
+      emit('update:active', false);
+    }
+
+    return {
+      closeDialog,
+    };
   },
 };
 </script>
@@ -35,5 +62,11 @@ export default {
   width: 304px;
   padding: 16px;
   background: white;
+}
+
+.footer {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

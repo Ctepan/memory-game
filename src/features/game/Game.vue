@@ -41,7 +41,12 @@
     </div>
 
     <teleport to=".modal-place">
-      <GameOverDialog time=""></GameOverDialog>
+      <AppDialog
+        v-model:active="isGameOverDialogOpen"
+        @update:active="handleGameOverDialogUpdate"
+      >
+        <GameOver :time="commonTime.value"></GameOver>
+      </AppDialog>
     </teleport>
   </div>
 </template>
@@ -54,17 +59,19 @@ import { useStore } from '@/store';
 import { Stopwatch } from '@/core/classes/Stopwatch';
 import { Timer } from '@/core/classes/Timer';
 import { shuffle } from '@/core/functions/shuffle';
+import AppDialog from '@/core/components/AppDialog.vue';
 import { ICONS } from '@/features/game/constants';
 import GameCard from './GameCard.vue';
-import GameOverDialog from './GameOverDialog.vue';
+import GameOver from './GameOver.vue';
 
 type TCard = { value: string }
 
 export default defineComponent({
   name: 'Game',
   components: {
+    AppDialog,
     GameCard,
-    GameOverDialog,
+    GameOver,
   },
   setup() {
     const store = useStore();
@@ -77,6 +84,7 @@ export default defineComponent({
     const memorizeTimer = ref(new Timer());
     const commonTime = ref(new Stopwatch());
     const selectedCards = ref([] as number[]);
+    const isGameOverDialogOpen = ref(false);
 
     const isMemorizing = computed(() => memorizeTimer.value.isStarted);
     const secondsPassedAfterStart = computed(() => commonTime.value.value);
@@ -90,7 +98,7 @@ export default defineComponent({
           date: Number(new Date()),
         });
         gameStarted.value = false;
-        commonTime.value.clear();
+        isGameOverDialogOpen.value = true;
         foundCards.value = [];
       }
     });
@@ -120,6 +128,12 @@ export default defineComponent({
 
     function handleStartClick() {
       startGame();
+    }
+
+    function handleGameOverDialogUpdate(value: boolean) {
+      if (!value) {
+        commonTime.value.clear();
+      }
     }
 
     async function handleCardClick(cardIndex: number) {
@@ -156,6 +170,7 @@ export default defineComponent({
     }
 
     return {
+      isGameOverDialogOpen,
       gameStarted,
       cards,
       foundCards,
@@ -166,6 +181,7 @@ export default defineComponent({
       secondsPassedAfterStart,
       isMemorizing,
       topRankScore,
+      handleGameOverDialogUpdate,
       handleCardClick,
       handleStartClick,
       isFound,
