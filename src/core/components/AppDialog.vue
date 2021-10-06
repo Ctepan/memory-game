@@ -19,10 +19,10 @@
   </div>
 </template>
 
-<script>
-import { onMounted, onUnmounted } from 'vue';
+<script lang="ts">
+import { watch, defineComponent, toRefs } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'AppDialog',
   props: {
     active: {
@@ -31,8 +31,11 @@ export default {
     },
   },
   setup(props, { emit }) {
-    onMounted(() => { window.document.body.style.overflow = 'hidden'; });
-    onUnmounted(() => { window.document.body.style.overflow = ''; });
+    const { active } = toRefs(props);
+
+    watch(active, (value: boolean) => {
+      window.document.body.style.overflow = value ? 'hidden' : '';
+    });
 
     function closeDialog() {
       emit('update:active', false);
@@ -42,7 +45,7 @@ export default {
       closeDialog,
     };
   },
-};
+});
 </script>
 
 <style scoped>
